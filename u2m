@@ -1,0 +1,52 @@
+#!/bin/bash
+
+if [[ -f "$PREFIX/bin/megareg" ]]; then     echo ''; else     echo -ne '\007';apt-get install megatools; fi
+
+FILE_PATH=""
+USERNAME=""
+PASSWORD=""
+
+function usage()
+{
+    echo -ne " \033[33;1mA simple command line script to send files to mega.nz\n"
+    echo -ne " \033[34;1mUSAGE: "
+    echo -ne " \033[36;1mbash u2m -f=[File Path] -u=[Username] -p=[Password]\n\n"
+    echo -ne "\t\033[35;1m-f --file          File path to send\n"
+    echo -ne "\t-u --username      Username for mega.nz account\n"
+    echo -ne "\t-u --password      Password for mega.nz account\n"
+    echo -ne "\t ? -h --help       Shows this help text\033[0m\n"
+    echo -ne "\n"
+}
+
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+    case $PARAM in
+        -h | ? | --help)
+            usage
+            exit
+            ;;
+        -f | -F | --file)
+            FILE_PATH=$VALUE
+            ;;
+        -u | -U | --username)
+            USERNAME=$VALUE
+            ;;
+        -p | -P | --password)
+            PASSWORD=$VALUE
+            ;;
+        *)
+            echo -ne " \033[41;1m\033[39;1m ERROR \033[0m\033[33;1m Unknown parameter: \033[34;1m\"\033[31;4m $PARAM \033[0m\033[34;1m\"\033[0m"
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+
+if [[ $FILE_PATH != "" && $USERNAME != "" && $PASSWORD != "" ]]; then
+    megaput -u $USERNAME -p $PASSWORD $FILE_PATH
+else
+    usage
+fi
